@@ -3,18 +3,103 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MeteoTrainer Pro - OMM</title>
+    <title>MeteoTrainer Pro - Examen OMM</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
 </head>
-<body class="bg-slate-50">
+<body class="bg-slate-900 text-slate-100 min-h-screen">
     <div id="root"></div>
 
     <script type="text/babel">
-        const { useState, useEffect } = React;
+        const { useState } = React;
+
+        const allExercises = {
+            'SYNOP': {
+                decode: [{
+                    message: "AAXX 18121 60715 46/// 72508 10227 20193 39856 40147 52035 60012=",
+                    questions: [
+                        { q: "Date/Heure (YYGGi)", a: "18121", hint: "Jour 18, 12h, UTC" },
+                        { q: "Station (IIiii)", a: "60715", hint: "Indicatif" },
+                        { q: "Vent: Direction", a: "250°", hint: "dd=25" },
+                        { q: "Vent: Vitesse", a: "8 kt", hint: "ff=08" },
+                        { q: "Température air", a: "22.7°C", hint: "10227" },
+                        { q: "Point de rosée", a: "19.3°C", hint: "20193" },
+                        { q: "Pression Station (QFE)", a: "985.6 hPa", hint: "Groupe 3" },
+                        { q: "Pression Mer (QFF)", a: "1014.7 hPa", hint: "Groupe 4" },
+                        { q: "Tendance (3h)", a: "+3.5 hPa", hint: "52035" },
+                        { q: "Précipitations", a: "1.2 mm", hint: "60012" }
+                    ]
+                }],
+                encode: [{
+                    scenario: "60715, le 10 à 06h. N=6, Vent 090/15kt, T=10.5, Td=08.2, QFE=1010.5, QFF=1021.2, RR=0.5mm/6h.",
+                    questions: [
+                        { q: "Section 0 (YYGGi)", a: "10061", hint: "10, 06h, i=1" },
+                        { q: "Section 1 (IIiii)", a: "60715", hint: "Indicatif" },
+                        { q: "Groupe Nddff", a: "60915", hint: "N=6, dd=09, ff=15" },
+                        { q: "Température (1SnTTT)", a: "10105", hint: "T=10.5" },
+                        { q: "Rosée (2SnTdTdTd)", a: "20082", hint: "Td=8.2" },
+                        { q: "Pression QFE (3P0P0P0P0)", a: "30105", hint: "Groupe 3" },
+                        { q: "Pression QFF (4PPPP)", a: "40212", hint: "Groupe 4" },
+                        { q: "Tendance (5appp)", a: "52012", hint: "+1.2hPa" },
+                        { q: "Précipitations (6RRRtR)", a: "60005", hint: "RRR=000" },
+                        { q: "Nuages (8NhCLCMCH)", a: "86///", hint: "N=6" }
+                    ]
+                }]
+            },
+            'TEMP (A/B)': {
+                decode: [{
+                    message: "TTAA 12121 60715 99015 22560 12510 00154 21055 13515 85452 12065=",
+                    questions: [
+                        { q: "Partie", a: "A", hint: "TTAA" },
+                        { q: "Pression sol", a: "1001.5 hPa", hint: "99015" },
+                        { q: "Température sol", a: "22.5°C", hint: "225" },
+                        { q: "Dépression rosée sol", a: "10°C", hint: "60" },
+                        { q: "Vent sol", a: "125° 10kt", hint: "12510" },
+                        { q: "Altitude 1000hPa", a: "154 m", hint: "00154" },
+                        { q: "Température 1000hPa", a: "21.0°C", hint: "210" },
+                        { q: "Altitude 850hPa", a: "1452 m", hint: "85452" },
+                        { q: "Température 850hPa", a: "12.0°C", hint: "120" },
+                        { q: "Vent 850hPa", a: "135° 15kt", hint: "13515" }
+                    ]
+                }]
+            },
+            'PILOT (A/B)': {
+                decode: [{
+                    message: "PPAA 05121 60715 99012 18015 00150 19020 85450 21035 70920 23045=",
+                    questions: [
+                        { q: "Partie", a: "A", hint: "PPAA" },
+                        { q: "Pression sol", a: "1001.2 hPa", hint: "99012" },
+                        { q: "Vent sol", a: "180° 15kt", hint: "18015" },
+                        { q: "Vent 1000hPa", a: "190° 20kt", hint: "19020" },
+                        { q: "Vent 850hPa", a: "210° 35kt", hint: "21035" },
+                        { q: "Vent 700hPa", a: "230° 45kt", hint: "23045" },
+                        { q: "Date", a: "05", hint: "YY=05" },
+                        { q: "Heure", a: "12h", hint: "GG=12" },
+                        { q: "Station", a: "60715", hint: "IIiii" },
+                        { q: "Unités vent", a: "Noeuds", hint: "i=1" }
+                    ]
+                }]
+            },
+            'CLIMAT': {
+                decode: [{
+                    message: "CLIMAT 202401 60715 111 185 105 333 125 080 444 045 666 008=",
+                    questions: [
+                        { q: "Période", a: "Janvier 2024", hint: "202401" },
+                        { q: "Temp Moyenne", a: "18.5°C", hint: "111 185" },
+                        { q: "Ecart-type T", a: "0.5°C", hint: "105" },
+                        { q: "Pression Moy", a: "1012.5 hPa", hint: "333 125" },
+                        { q: "Vapeur Moy", a: "8.0 hPa", hint: "080" },
+                        { q: "RR Totale", a: "45 mm", hint: "444 045" },
+                        { q: "Jours RR>1mm", a: "8 jours", hint: "666 008" },
+                        { q: "Station", a: "60715", hint: "Indicatif" },
+                        { q: "Section 1 indic.", a: "111", hint: "Données normales" },
+                        { q: "Section 4 indic.", a: "444", hint: "Précipitations" }
+                    ]
+                }]
+            }
+        };
 
         const MeteoTrainer = () => {
             const [selectedType, setSelectedType] = useState('SYNOP');
@@ -24,47 +109,9 @@
             const [showSolution, setShowSolution] = useState(false);
             const [score, setScore] = useState({ correct: 0, total: 0 });
 
-            const exercises = {
-                SYNOP: {
-                    decode: [
-                        {
-                            message: "AAXX 18121 60715 46/// 72508 10227 20193 39856 40147 52035 60012 846//=",
-                            questions: [
-                                { q: "Heure d'observation (UTC)?", a: "12h00 UTC le 18", hint: "Groupe YYGGi : 18121" },
-                                { q: "Indicatif station?", a: "60715", hint: "Groupe IIiii" },
-                                { q: "Nébulosité totale (octas)?", a: "4 octas", hint: "N dans Nddff" },
-                                { q: "Direction du vent?", a: "250°", hint: "dd=25 (x10)" },
-                                { q: "Vitesse du vent?", a: "8 nœuds", hint: "ff=08" },
-                                { q: "Température air (°C)?", a: "22.7°C", hint: "1SnTTT : 10227" },
-                                { q: "Point de rosée (°C)?", a: "19.3°C", hint: "2SnTdTdTd : 20193" },
-                                { q: "Pression station (hPa)?", a: "985.6 hPa", hint: "3P0P0P0P0" },
-                                { q: "Pression niveau mer (hPa)?", a: "1014.7 hPa", hint: "4PPPP" },
-                                { q: "Précipitations 6h (mm)?", a: "1.2 mm", hint: "6RRRtR" }
-                            ]
-                        }
-                    ],
-                    encode: [
-                        {
-                            scenario: "Station 60715, le 18 à 12h UTC. N=4, Vent 250°/08kt, T=22.7°C, Td=19.3°C, QFE=985.6, QFF=1014.7, RR=1.2mm/6h, Tendance +3.5hPa.",
-                            questions: [
-                                { q: "Section 0 (YYGGi)", a: "18121", hint: "Jour 18, 12h, i=1" },
-                                { q: "Section 1 (IIiii)", a: "60715", hint: "Indicatif station" },
-                                { q: "Groupe Vent (Nddff)", a: "42508", hint: "N=4, dd=25, ff=08" },
-                                { q: "Groupe Température (1SnTTT)", a: "10227", hint: "T=22.7 positive" },
-                                { q: "Groupe Rosée (2SnTdTdTd)", a: "20193", hint: "Td=19.3 positive" },
-                                { q: "Groupe Pression Station (3P0P0P0P0)", a: "39856", hint: "Omettre le 1er chiffre" },
-                                { q: "Groupe Pression Mer (4PPPP)", a: "40147", hint: "Omettre le 1er chiffre" },
-                                { q: "Groupe Tendance (5appp)", a: "52035", hint: "Hausse continue (a=2), 3.5hPa" },
-                                { q: "Groupe Précipitations (6RRRtR)", a: "60012", hint: "RRR=012, tR=1 (6h)" },
-                                { q: "Groupe Nuages (8NhCLCMCH)", a: "846//", hint: "N=4, h=6, nuages indet." }
-                            ]
-                        }
-                    ]
-                }
-            };
-
             const generateExercise = () => {
-                const modeData = exercises[selectedType][selectedMode];
+                const data = allExercises[selectedType];
+                const modeData = data[selectedMode] || data['decode'];
                 const ex = modeData[Math.floor(Math.random() * modeData.length)];
                 setCurrentExercise(ex);
                 setUserAnswers({});
@@ -72,85 +119,78 @@
             };
 
             const checkAnswers = () => {
-                let correctCount = 0;
+                let correct = 0;
                 currentExercise.questions.forEach((q, idx) => {
-                    const userVal = (userAnswers[idx] || '').toLowerCase().trim().replace(/\s/g, '');
-                    const correctVal = q.a.toLowerCase().trim().replace(/\s/g, '');
-                    if (userVal === correctVal || (correctVal.includes(userVal) && userVal.length > 2)) {
-                        correctCount++;
-                    }
+                    const u = (userAnswers[idx] || '').toLowerCase().trim().replace(/\s/g, '');
+                    const a = q.a.toLowerCase().trim().replace(/\s/g, '');
+                    if (u === a || (a.includes(u) && u.length > 2)) correct++;
                 });
-                setScore(s => ({ correct: s.correct + correctCount, total: s.total + 10 }));
+                setScore(s => ({ correct: s.correct + correct, total: s.total + 10 }));
                 setShowSolution(true);
             };
 
             return (
-                <div className="min-h-screen p-4 md:p-8">
-                    <div className="max-w-3xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden border border-slate-200">
-                        <div className="bg-indigo-700 p-6 text-white text-center">
-                            <h1 className="text-3xl font-bold uppercase tracking-tighter">MeteoTrainer Pro</h1>
-                            <p className="opacity-80 mt-1">Maîtrisez les codes OMM (SYNOP, TEMP, PILOT)</p>
-                        </div>
+                <div className="max-w-5xl mx-auto p-4 md:p-10">
+                    <header className="bg-indigo-600 p-8 rounded-t-3xl shadow-2xl text-center">
+                        <h1 className="text-4xl font-black italic tracking-tighter uppercase">MétéoTrainer OMM</h1>
+                        <p className="text-indigo-200 font-bold mt-2 tracking-widest text-xs">SYNOP • SHIP • TEMP (A/B/C/D) • PILOT • CLIMAT</p>
+                    </header>
 
-                        <div className="p-6">
-                            <div className="flex flex-wrap gap-4 justify-center mb-8">
-                                <select 
-                                    className="border-2 border-slate-200 rounded-lg px-4 py-2 outline-none focus:border-indigo-500"
-                                    value={selectedType} onChange={(e) => setSelectedType(e.target.value)}
-                                >
-                                    <option>SYNOP</option>
-                                </select>
-                                <div className="flex bg-slate-100 p-1 rounded-lg">
-                                    <button onClick={() => setSelectedMode('decode')} className={`px-4 py-1 rounded-md ${selectedMode === 'decode' ? 'bg-white shadow text-indigo-600' : 'text-slate-500'}`}>Décodage</button>
-                                    <button onClick={() => setSelectedMode('encode')} className={`px-4 py-1 rounded-md ${selectedMode === 'encode' ? 'bg-white shadow text-indigo-600' : 'text-slate-500'}`}>Encodage</button>
-                                </div>
-                                <button onClick={generateExercise} className="bg-indigo-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-indigo-700 transition">Nouvel Exercice</button>
+                    <main className="bg-slate-800 p-6 md:p-10 rounded-b-3xl shadow-2xl border-x border-b border-slate-700">
+                        <div className="flex flex-wrap gap-4 mb-10 bg-slate-900/50 p-4 rounded-2xl">
+                            <select className="bg-slate-700 p-3 rounded-lg font-bold outline-none" value={selectedType} onChange={e => setSelectedType(e.target.value)}>
+                                {Object.keys(allExercises).map(k => <option key={k}>{k}</option>)}
+                            </select>
+                            <div className="flex bg-slate-700 p-1 rounded-lg">
+                                <button onClick={() => setSelectedMode('decode')} className={`px-6 py-2 rounded-md font-bold transition ${selectedMode === 'decode' ? 'bg-indigo-600 text-white' : 'text-slate-400'}`}>Décodage</button>
+                                <button onClick={() => setSelectedMode('encode')} className={`px-6 py-2 rounded-md font-bold transition ${selectedMode === 'encode' ? 'bg-indigo-600 text-white' : 'text-slate-400'}`}>Encodage</button>
                             </div>
-
-                            {currentExercise ? (
-                                <div className="space-y-6">
-                                    <div className="bg-slate-900 text-indigo-300 p-6 rounded-xl font-mono text-lg shadow-inner border-l-4 border-indigo-500">
-                                        <div className="text-xs text-slate-500 mb-2 uppercase tracking-widest">Données de l'exercice</div>
-                                        {selectedMode === 'decode' ? currentExercise.message : currentExercise.scenario}
-                                    </div>
-
-                                    <div className="grid gap-4">
-                                        {currentExercise.questions.map((q, idx) => (
-                                            <div key={idx} className="p-4 border border-slate-200 rounded-xl hover:bg-slate-50 transition">
-                                                <label className="block text-slate-700 font-semibold mb-2">{idx + 1}. {q.q}</label>
-                                                <input 
-                                                    type="text" 
-                                                    className="w-full border-2 border-slate-200 rounded-lg p-2 focus:border-indigo-500 outline-none"
-                                                    value={userAnswers[idx] || ''}
-                                                    onChange={(e) => setUserAnswers({...userAnswers, [idx]: e.target.value})}
-                                                    disabled={showSolution}
-                                                />
-                                                {showSolution && (
-                                                    <div className="mt-2 text-sm">
-                                                        <div className="text-green-600 font-bold">✓ {q.a}</div>
-                                                        <div className="text-blue-500 italic text-xs">Aide: {q.hint}</div>
-                                                    </div>
-                                                )}
-                                            </div>
-                                        ))}
-                                    </div>
-
-                                    <div className="flex flex-col items-center gap-4 py-6 border-t">
-                                        {!showSolution ? (
-                                            <button onClick={checkAnswers} className="w-full bg-green-600 text-white py-4 rounded-xl font-bold text-xl hover:bg-green-700 shadow-lg">Vérifier les 10 réponses</button>
-                                        ) : (
-                                            <div className="text-center">
-                                                <div className="text-2xl font-bold text-indigo-900 mb-4">Score : {score.correct} / {score.total}</div>
-                                                <button onClick={generateExercise} className="bg-slate-800 text-white px-8 py-3 rounded-xl font-bold hover:bg-slate-900">Continuer l'entraînement</button>
-                                            </div>
-                                        )}
-                                    </div>
-                                </div>
-                            ) : (
-                                <div className="text-center py-20 text-slate-400">Sélectionnez un mode et cliquez sur "Nouvel Exercice"</div>
-                            )}
+                            <button onClick={generateExercise} className="ml-auto bg-green-500 hover:bg-green-400 text-slate-900 font-black px-8 py-2 rounded-lg transition uppercase tracking-widest shadow-lg">Nouvel Exercice</button>
                         </div>
-                    </div>
+
+                        {currentExercise ? (
+                            <div className="animate-in fade-in duration-700">
+                                <div className="bg-black/50 p-6 rounded-2xl border-l-8 border-indigo-500 mb-10 font-mono text-xl text-indigo-300 shadow-inner">
+                                    <span className="text-slate-500 text-[10px] uppercase block mb-2 underline tracking-widest italic">Données sources :</span>
+                                    {selectedMode === 'decode' ? currentExercise.message : currentExercise.scenario}
+                                </div>
+
+                                <div className="grid md:grid-cols-2 gap-6">
+                                    {currentExercise.questions.map((q, idx) => (
+                                        <div key={idx} className="bg-slate-700/30 p-5 rounded-2xl border border-slate-700 hover:border-indigo-500 transition shadow-sm">
+                                            <p className="text-xs font-black text-slate-500 uppercase mb-2">Question {idx+1} • {q.q}</p>
+                                            <input 
+                                                className="w-full bg-slate-900 border-2 border-slate-700 p-3 rounded-xl outline-none focus:border-green-400 transition text-white"
+                                                value={userAnswers[idx] || ''}
+                                                onChange={e => setUserAnswers({...userAnswers, [idx]: e.target.value})}
+                                                disabled={showSolution}
+                                                placeholder="..."
+                                            />
+                                            {showSolution && (
+                                                <div className="mt-3 text-xs">
+                                                    <p className="text-green-400 font-bold">Solution: {q.a}</p>
+                                                    <p className="text-slate-500 italic uppercase tracking-tighter">Code: {q.hint}</p>
+                                                </div>
+                                            )}
+                                        </div>
+                                    ))}
+                                </div>
+
+                                <div className="mt-12 flex flex-col items-center border-t border-slate-700 pt-10">
+                                    {!showSolution ? (
+                                        <button onClick={checkAnswers} className="bg-indigo-600 hover:bg-indigo-500 text-white px-16 py-5 rounded-full font-black text-2xl shadow-2xl transition hover:scale-105 uppercase tracking-tighter">Valider mes 10 réponses</button>
+                                    ) : (
+                                        <div className="text-center">
+                                            <div className="text-6xl font-black text-green-400 mb-6 drop-shadow-xl italic">SCORE : {score.correct} / {score.total}</div>
+                                            <button onClick={generateExercise} className="bg-white text-slate-900 px-12 py-4 rounded-full font-black hover:bg-slate-200 transition uppercase shadow-xl">Exercice Suivant</button>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        ) : (
+                            <div className="text-center py-20 text-slate-500 font-black text-3xl italic opacity-20">PRÊT POUR L'EXAMEN ?</div>
+                        )}
+                    </main>
                 </div>
             );
         };
