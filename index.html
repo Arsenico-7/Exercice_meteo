@@ -3,133 +3,260 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CREADUCTIVIDAD</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;600;800&display=swap" rel="stylesheet">
-    
+    <title>Otaku Dev - Comienza tu Viaje</title>
     <style>
-        /* CSS: El diseño de la página */
-        :root {
-            --primary: #6e8efb;
-            --secondary: #a777e3;
-            --text: #ffffff;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
         body {
-            margin: 0;
-            padding: 0;
-            font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            height: 100vh;
+            font-family: 'Arial', sans-serif;
+            overflow-x: hidden;
+        }
+
+        .page {
+            min-height: 100vh;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
-            color: var(--text);
-            overflow: hidden;
+            justify-content: center;
+            padding: 20px;
+            position: relative;
         }
 
-        .card {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            padding: 40px;
-            border-radius: 20px;
-            text-align: center;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-            max-width: 400px;
-            transition: transform 0.3s ease;
+        #page1 {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            animation: gradientShift 10s ease infinite;
         }
 
-        .card:hover {
-            transform: scale(1.02);
+        @keyframes gradientShift {
+            0%, 100% { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+            50% { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
         }
 
-        h1 {
-            font-size: 1.8rem;
-            margin-bottom: 20px;
-            font-weight: 800;
-            text-transform: uppercase;
-        }
-
-        .profile-img {
-            width: 150px;
-            height: 150px;
-            border-radius: 50%; /* Imagen circular */
-            object-fit: cover;
-            border: 4px solid white;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            margin-bottom: 20px;
-            display: none; /* La ocultamos al principio para la sorpresa */
-        }
-
-        h2 {
-            font-size: 1.2rem;
-            font-weight: 300;
-            margin-bottom: 30px;
-        }
-
-        button {
-            background: #ffffff;
-            color: var(--primary);
-            border: none;
-            padding: 12px 25px;
-            border-radius: 50px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-        }
-
-        button:hover {
-            background: var(--primary);
-            color: white;
-            transform: translateY(-3px);
-            box-shadow: 0 6px 20px rgba(0,0,0,0.2);
-        }
-
-        /* Animación para cuando aparezca la imagen */
-        .fade-in {
-            animation: fadeIn 1.5s ease forwards;
+        #page2 {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            display: none;
+            animation: fadeIn 0.8s ease;
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .particles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 50%;
+            animation: float 15s infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) translateX(0); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-100vh) translateX(50px); opacity: 0; }
+        }
+
+        .content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+        }
+
+        .image-container {
+            margin-bottom: 40px;
+            animation: floatImage 3s ease-in-out infinite;
+        }
+
+        @keyframes floatImage {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .sasuke-img {
+            max-width: 400px;
+            width: 90%;
+            height: auto;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            transition: transform 0.3s ease;
+        }
+
+        .sasuke-img:hover {
+            transform: scale(1.05);
+        }
+
+        .button-container {
+            position: relative;
+        }
+
+        .click-hint {
+            color: white;
+            font-size: 14px;
+            margin-bottom: 10px;
+            animation: pulse 2s ease-in-out infinite;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(1.05); }
+        }
+
+        .cta-button {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a6f);
+            color: white;
+            padding: 20px 50px;
+            font-size: 24px;
+            font-weight: bold;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+            background: linear-gradient(135deg, #ee5a6f, #ff6b6b);
+        }
+
+        .cta-button:active {
+            transform: translateY(-2px);
+        }
+
+        .question-container {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            padding: 60px 40px;
+            border-radius: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            animation: slideIn 0.8s ease;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .question {
+            font-size: 48px;
+            font-weight: bold;
+            color: white;
+            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.4);
+            line-height: 1.4;
+            animation: textGlow 2s ease-in-out infinite;
+        }
+
+        @keyframes textGlow {
+            0%, 100% { text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.4); }
+            50% { text-shadow: 3px 3px 20px rgba(255, 255, 255, 0.6), 3px 3px 6px rgba(0, 0, 0, 0.4); }
+        }
+
+        .emoji {
+            font-size: 60px;
+            display: block;
+            margin-top: 30px;
+            animation: bounce 1s ease infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @media (max-width: 768px) {
+            .sasuke-img {
+                max-width: 300px;
+            }
+            
+            .cta-button {
+                padding: 15px 35px;
+                font-size: 18px;
+            }
+            
+            .question {
+                font-size: 32px;
+            }
+            
+            .question-container {
+                padding: 40px 25px;
+            }
         }
     </style>
 </head>
 <body>
+    <!-- Página 1 -->
+    <div id="page1" class="page">
+        <div class="particles" id="particles1"></div>
+        <div class="content">
+            <div class="image-container">
+                <a href="https://ibb.co/8gnypJpS"><img src="https://i.ibb.co/HTLcs0sk/itachi-sharingan-look-down-bouso6qi0g04jykz.jpg" alt="itachi sharingan look down bouso6qi0g04jykz"  class="sasuke-img" border="0"></a>
+                <!-- <img src="https://i.ibb.co/HTLcs0sk/itachi-sharingan-look-down-bouso6qi0g04jykz.jpg" alt="Itachi Sharingan" class="sasuke-img"> -->
+            </div>
+            <div class="button-container">
+                <p class="click-hint">👇 Haz clic aquí 👇</p>
+                <button class="cta-button" onclick="showQuestion()">
+                    Tengo una pregunta para ti
+                </button>
+            </div>
+        </div>
+    </div>
 
-    <div class="card">
-        <h1>¿Quién es el amor de mi vida?</h1>
-        
-        <img src="https://i.ibb.co/rKsvqFMG/Whats-App-Image-2025-10-08-at-23-09-40.jpg" 
-             id="loveImage" 
-             class="profile-img" 
-             alt="El amor de mi vida">
-
-        <h2 id="textHint">Haz clic abajo para descubrirlo...</h2>
-
-        <button onclick="revelarAmor()">Click aquí para conocerla</button>
+    <!-- Página 2 -->
+    <div id="page2" class="page">
+        <div class="particles" id="particles2"></div>
+        <div class="content">
+            <div class="question-container">
+                <div class="question">
+                    ¿Cuándo quieres empezar a programar?
+                </div>
+                <span class="emoji">💻⚡🚀</span>
+            </div>
+        </div>
     </div>
 
     <script>
-        /* JAVASCRIPT: La interactividad */
-        function revelarAmor() {
-            const img = document.getElementById('loveImage');
-            const hint = document.getElementById('textHint');
-            
-            // Mostrar la imagen con animación
-            img.style.display = 'inline-block';
-            img.classList.add('fade-in');
-            
-            // Cambiar el texto
-            hint.innerHTML = "<strong>¡Aquí la tienes! ❤️</strong>";
-            
-            // Ocultar el botón después de clicar
-            event.target.style.display = 'none';
+        // Crear partículas
+        function createParticles(containerId) {
+            const container = document.getElementById(containerId);
+            for (let i = 0; i < 50; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 15 + 's';
+                particle.style.animationDuration = (Math.random() * 10 + 10) + 's';
+                container.appendChild(particle);
+            }
+        }
+
+        createParticles('particles1');
+        createParticles('particles2');
+
+        // Mostrar pregunta
+        function showQuestion() {
+            document.getElementById('page1').style.display = 'none';
+            document.getElementById('page2').style.display = 'flex';
         }
     </script>
-
 </body>
 </html>
